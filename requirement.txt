@@ -1,0 +1,9 @@
+torch==2.1.1
+torchvision
+scikit-learn 
+scipy
+pandas
+numpy==1.26.4
+transformers==4.30.1
+tqdm
+einops

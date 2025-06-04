@@ -1,0 +1,5 @@
+AR_6p_8c.mat, AR_8p_8c.mat
+
+# # PAMAP2 120,000 samples for 6 or 8 subjects. 20,000 samples for each sub. 51 features, 8 activities(0-7)
+feature = sc.loadmat("/home/xiangzhang/matlabwork/AR_6p_8c.mat")
+all = feature['AR_6p_8c']
