@@ -118,7 +118,7 @@ python classification.py --task {task_name} \
 
    - ```task```: the classification task name, select from ```[P12, P19, PAM]```.
    - ```model```: models with different representation methods ```[istsplm, istsplm_vector, istsplm_set]```.
-   - ```collate``` the collate function to represent the irregular time series, select from ```[indseq, vector]```.
+   - ```collate```: the collate function to represent the irregular time series, select from ```[indseq, vector]```.
    - ```te_model```&```st_model```: the type of PLM used for intra-series modeling and inter-series modeling ```[gpt, bert, ...]```.
    - ```n_te_plmlayer```&```n_st_plmlayer```: the number of PLM layers uses for intra-series modeling and inter-series modeling.
    - ```semi_freeze```: whether or not to fine-tune the ```LayerNorm``` of the PLM.
@@ -153,7 +153,7 @@ python regression.py --dataset {dataset_name} \
    - ```dataset```: the regression dataset name, select from ```[physionet, mimic, activity, ushcn]```.
    - ```task```: the regression task name, select from ```[forecasting, imputation]```.
    - ```model```: models with different representation methods ```[istsplm_forecast, istsplm_vector_forecast, istsplm_set_forecast]```.
-   - ```collate``` the collate function to represent the irregular time series, select from ```[indseq, vector]```.
+   - ```collate```: the collate function to represent the irregular time series, select from ```[indseq, vector]```.
    - ```te_model```&```st_model```: the type of PLM used for intra-series modeling and inter-series modeling ```[gpt, bert, ...]```.
    - ```n_te_plmlayer```&```n_st_plmlayer```: the number of PLM layers uses for intra-series modeling and inter-series modeling.
    - ```semi_freeze```: whether or not to fine-tune the ```LayerNorm``` of the PLM.
