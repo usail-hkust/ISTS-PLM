@@ -289,6 +289,13 @@ def compute_error(truth, pred_y, mask, func, reduce, norm_dict=None):
 			mask = (truth_rescale != 0) * mask
 			truth_rescale_div = truth_rescale + (truth_rescale == 0) * 1e-8
 			error = torch.abs(truth_rescale - pred_y_rescale) / truth_rescale_div * mask
+	elif(func == "HUBER"):
+		delta = 2
+		abs_error = torch.abs(truth_repeated - pred_y)
+		quadratic = torch.min(abs_error, torch.tensor(delta))
+		linear = abs_error - quadratic
+		error = 0.5 * quadratic**2 + delta * linear
+		error = error * mask
 	else:
 		raise Exception("Error function not specified")
 
@@ -319,7 +326,7 @@ def compute_error(truth, pred_y, mask, func, reduce, norm_dict=None):
 		raise Exception("Reduce argument not specified!")
 
 
-def compute_all_losses(model, batch_dict):
+def compute_all_losses(model, batch_dict, dataset=None):
 	# Condition on subsampled points
 	# Make predictions for all the points
 	# shape of pred --- [n_traj_samples=1, n_batch, n_tp, n_dim]
@@ -339,6 +346,9 @@ def compute_all_losses(model, batch_dict):
 	# print(batch_dict["data_to_predict"].shape, pred_y.shape, batch_dict["mask_predicted_data"].shape, mse, mse.shape)
 	# mse loss
 	loss = mse
+
+	if(dataset == 'ushcn'):
+		loss = compute_error(batch_dict["data_to_predict"], pred_y, mask = batch_dict["mask_predicted_data"], func="HUBER", reduce="mean") # a scalar
 
 	results = {}
 	results["loss"] = loss

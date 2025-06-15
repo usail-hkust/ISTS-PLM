@@ -11,11 +11,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.nn.parallel import DataParallel
-import Utils
-from Utils import *
-
-from Dataset_MM import get_PAM_data, get_P12_data, get_P19_data, get_P12_data_zeroshot
-from models.gpt4ts import *
+from lib.utils import *
+from lib.Dataset_MM import get_PAM_data, get_P12_data, get_P19_data, get_P12_data_zeroshot
+from models.plm4ts import *
 
 eps=1e-7
 
@@ -225,7 +223,8 @@ def main():
     parser.add_argument('--model', type=str, default='gpt', help='select from [gpt, gpt_patch, warpformer]')
 
     parser.add_argument('--root_path', type=str, default='')
-    parser.add_argument('--data_path', type=str, default='../data/')
+    parser.add_argument('--save_path', type=str, default='./save/')
+    parser.add_argument('--data_path', type=str, default='./data/')
 
     parser.add_argument('-n',  type=int, default=12000, help="Size of the dataset")
     parser.add_argument('--epoch', type=int, default=20)
@@ -236,7 +235,6 @@ def main():
     
     parser.add_argument('--gpu', type=str, default='0')
     parser.add_argument('--log', type=str, default='./logs/')
-    parser.add_argument('--save_path', type=str, default='./save/')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--patience', type=int, default=10)
     parser.add_argument('--weight_decay', type=float, default=1e-5)
@@ -253,10 +251,10 @@ def main():
     parser.add_argument('--retrain', action='store_true')
     parser.add_argument('--n_classes',  type=int, default=2)
 
-    ### gpt4ts
+    ### plm4ists
     parser.add_argument('--d_model', type=int, default=768, help="d_model of the PLM, 768 for Bert&GPT")
-    parser.add_argument('--n_te_gptlayer', type=int, default=6)
-    parser.add_argument('--n_st_gptlayer', type=int, default=6)
+    parser.add_argument('--n_te_plmlayer', type=int, default=6)
+    parser.add_argument('--n_st_plmlayer', type=int, default=6)
     parser.add_argument('--te_model', type=str, default='gpt')
     parser.add_argument('--st_model', type=str, default='bert')
     parser.add_argument('--max_len', type=int, default=-1)
@@ -279,7 +277,6 @@ def main():
     opt.device = torch.device('cuda')
     # opt.device = torch.device('cpu')
 
-
     input_command = sys.argv
     ind = [i for i in range(len(input_command)) if input_command[i] == "--load"]
     if len(ind) == 1:
@@ -288,8 +285,7 @@ def main():
     input_command = " ".join(input_command)
     print(input_command)
 
-    Utils.setup_seed(seed)
-
+    setup_seed(seed)
 
     """ prepare dataloader """
     if opt.task == 'PAM':
@@ -366,14 +362,16 @@ def main():
         opt.state='debug'
         exp_desc = f"{opt.task}_{opt.model}_{opt.state}"
     else:
-        exp_desc = f"{opt.task}_{opt.model}_{opt.state}_maxlen{opt.max_len}_num{opt.n}_lr{opt.lr}_sample{opt.sample_rate}_ft:{opt.semi_freeze}_temodel:{opt.te_model}_stmodel:{opt.st_model}"
+        exp_desc = f"{opt.task}_{opt.model}_{opt.state}_plmlayer{opt.n_te_plmlayer}_{opt.n_st_plmlayer}_lr{opt.lr}"
     
     opt.log = f"{opt.log}{exp_desc}.log"
     print("! Log path:", opt.log)
 
     if opt.save_path is not None:
+        os.makedirs(opt.save_path, exist_ok=True)
         opt.save_res = opt.save_path + exp_desc
         save_path = opt.save_path + exp_desc + '.h5'
+        
     else:
         save_path = None
     
@@ -384,10 +382,7 @@ def main():
     scheduler = optim.lr_scheduler.StepLR(optimizer, 10, gamma=0.5)
 
     """ prediction loss function """
-    if opt.task == 'wbm':
-        pred_loss_func = nn.BCEWithLogitsLoss(reduction='none').to(opt.device)
-    else:
-        pred_loss_func = nn.CrossEntropyLoss(ignore_index=-1, reduction='none').to(opt.device)
+    pred_loss_func = nn.CrossEntropyLoss(ignore_index=-1, reduction='none').to(opt.device)
 
 
     # setup the log file

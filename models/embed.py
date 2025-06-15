@@ -387,7 +387,6 @@ class DataEmbedding_ITS_UNI(nn.Module):
 
 
 
-
 class DataEmbedding_wo_pos(nn.Module):
     def __init__(self, c_in, d_model, embed_type='fixed', freq='h', dropout=0.1):
         super(DataEmbedding_wo_pos, self).__init__()
