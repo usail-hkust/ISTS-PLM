@@ -11,7 +11,7 @@ Framework overview of ISTS-PLM for set-based (ISTS-PLM-S), vector-based (ISTS-PL
 
 
 ## Main results
-Performance comparison on the mainstream ISTS analytical tasks, including Classification, Interpolation and Extrapolation.  
+Performance comparison on the mainstream ISTS analytical tasks, including **Classification**, **Interpolation** and **Extrapolation**:  
 
 <p align="center">
   <img src="./figs/classify_results.png" alt="results" width="100%">
@@ -38,26 +38,26 @@ Performance comparison on the mainstream ISTS analytical tasks, including Classi
 
    All instructions below should be executed from a terminal.
 
-   1. clone this repository and run 
+   1. Clone this repository and run 
 
    ```bash
 cd ISTS-PLM
    ```
 
-   2. create an environment ```ISTS-PLM``` and activate it.
+   2. Create an environment ```ISTS-PLM``` and activate it.
 
    ```bash
 conda create -n ISTS-PLM python=3.9
 conda activate ISTS-PLM
    ```
 
-   3. install the required Python modules using file [requirements.txt](requirements.txt).
+   3. Install the required Python modules using file [requirements.txt](requirements.txt).
 
    ```bash
 pip install -r requirement.txt
    ```
 
-   4. download the PLMs used in the experiments, including gpt2 (https://huggingface.co/openai-community/gpt2) and bert (https://huggingface.co/google-bert/bert-base-uncased), and put downloaded models into the folder [PLMs](./PLMs). Note that not limited to the used models, our framework can also accommodate the other more powerful PLMs.
+   4. Download PLMs used in the experiments, including ```gpt2``` (https://huggingface.co/openai-community/gpt2) and ```bert``` (https://huggingface.co/google-bert/bert-base-uncased), and put the downloaded models into folder [PLMs](./PLMs). Note that not limited to the used models, our framework can also accommodate the other more powerful PLMs.
 
 
 **Notices**: After creating the conda environment, you are supposed to find the ```gpt2``` and ```bert``` of ```transformer``` and copy the files in [model_wope](model_wope) to ```gpt2``` and ```bert```, respectively. The path of the ```gpt2``` and ```bert``` may look like this:
@@ -110,8 +110,8 @@ python classification.py --task {task_name} \
                --model {model_name} \
                --te_model {plm_type for ts} \
                --st_model {plm_type for var} \
-               --n_te_gptlayer {n_layer for ts} \
-               --n_st_gptlayer {n_layer for var} \
+               --n_te_plmlayer {n_layer for ts} \
+               --n_st_plmlayer {n_layer for var} \
                --collate {collate_name} \
                --semi_freeze
    ```
@@ -138,14 +138,14 @@ bash scripts/scripts_extrapolation/physionet.sh
 
    ```bash
 python regression.py --dataset {dataset_name} \
-		        --task {task_name} \
+            --task {task_name} \
                --lr {learning_rate} \
                --batch {batch_size} \
                --model {model_name} \
                --te_model {plm_type for ts} \
                --st_model {plm_type for var} \
-               --n_te_gptlayer {n_layer for ts} \
-               --n_st_gptlayer {n_layer for var} \
+               --n_te_plmlayer {n_layer for ts} \
+               --n_st_plmlayer {n_layer for var} \
                --collate {collate_name} \
                --semi_freeze
    ```
